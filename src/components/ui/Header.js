@@ -71,6 +71,7 @@ const Header = (props) => {
 	const [index, setIndex] = useState(0);
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [open, setOpen] = useState(false);
+	const [selectedIndex, setSelectedIndex] = useState(0);
 
 	const indexHandler = (e, idx) => {
 		setIndex(idx);
@@ -86,6 +87,19 @@ const Header = (props) => {
 		setOpen(false);
 	};
 
+	const handleMenuItemClick = (event, index) => {
+		setAnchorEl(null);
+		setOpen(false);
+		setSelectedIndex(index);
+	};
+
+	const menuOptions = [
+		{ name: "Services", link: "/services" },
+		{ name: "Custom Software Development", link: "/customsoftware" },
+		{ name: "Mobile App Development", link: "/mobiledevelopment" },
+		{ name: "Website Development", link: "/webdevelopment" },
+	];
+
 	useEffect(() => {
 		if (window.location.pathname === "/" && index !== 0) {
 			setIndex(0);
@@ -99,6 +113,61 @@ const Header = (props) => {
 			setIndex(4);
 		} else if (window.location.pathname === "/estimate" && index !== 4) {
 			setIndex(5);
+		}
+
+		switch (window.location.pathname) {
+			case "/":
+				if (index !== 0) {
+					setIndex(0);
+				}
+				break;
+			case "/services":
+				if (index !== 1) {
+					setIndex(1);
+					setSelectedIndex(0);
+				}
+				break;
+			case "/customsoftware":
+				if (index !== 1) {
+					setIndex(1);
+					setSelectedIndex(1);
+				}
+				break;
+			case "/mobiledevelopment":
+				if (index !== 1) {
+					setIndex(1);
+					setSelectedIndex(2);
+				}
+				break;
+			case "/webdevelopment":
+				if (index !== 1) {
+					setIndex(1);
+					setSelectedIndex(3);
+				}
+				break;
+			case "/revolution":
+				if (index !== 2) {
+					setIndex(2);
+				}
+				break;
+			case "/about":
+				if (index !== 3) {
+					setIndex(3);
+				}
+				break;
+			case "/contact":
+				if (index !== 4) {
+					setIndex(4);
+				}
+				break;
+			case "/estimate":
+				if (index !== 5) {
+					setIndex(5);
+				}
+				break;
+
+			default:
+				break;
 		}
 	}, [index]);
 
@@ -177,50 +246,22 @@ const Header = (props) => {
 							classes={{ paper: classes.menu }}
 							elevation={0}
 						>
-							<MenuItem
-								onClick={() => {
-									handleClose();
-									setIndex(1);
-								}}
-								component={Link}
-								to="/services"
-								classes={{ root: classes.menuItem }}
-							>
-								Services
-							</MenuItem>
-							<MenuItem
-								onClick={() => {
-									handleClose();
-									setIndex(1);
-								}}
-								component={Link}
-								to="/customsoftware"
-								classes={{ root: classes.menuItem }}
-							>
-								Custom Software Development
-							</MenuItem>
-							<MenuItem
-								onClick={() => {
-									handleClose();
-									setIndex(1);
-								}}
-								component={Link}
-								to="/mobiledevelopment"
-								classes={{ root: classes.menuItem }}
-							>
-								Mobile App Development
-							</MenuItem>
-							<MenuItem
-								onClick={() => {
-									handleClose();
-									setIndex(1);
-								}}
-								component={Link}
-								to="/webdevelopment"
-								classes={{ root: classes.menuItem }}
-							>
-								Website Development
-							</MenuItem>
+							{menuOptions.map((option, _index) => (
+								<MenuItem
+									key={option}
+									component={Link}
+									to={option.link}
+									classes={{ root: classes.menuItem }}
+									onClick={(event) => {
+										handleMenuItemClick(event, _index);
+										setIndex(1);
+										handleClose();
+									}}
+									selected={_index === selectedIndex && index === 1}
+								>
+									{option.name}
+								</MenuItem>
+							))}
 						</Menu>
 					</Toolbar>
 				</AppBar>
