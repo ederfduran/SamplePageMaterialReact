@@ -9,6 +9,8 @@ import Button from "@material-ui/core/Button";
 import { Link } from "react-router-dom";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { useTheme } from "@material-ui/core/styles";
 
 import logo from "../../assets/logo.svg";
 
@@ -28,9 +30,21 @@ const useStyles = makeStyles((theme) => ({
 	toolbarMargin: {
 		...theme.mixins.toolbar,
 		marginBottom: "3em",
+		[theme.breakpoints.down("md")]: {
+			marginBottom: "2em",
+		},
+		[theme.breakpoints.down("xs")]: {
+			marginBottom: "1.25em",
+		},
 	},
 	logo: {
 		height: "8em",
+		[theme.breakpoints.down("md")]: {
+			height: "7em",
+		},
+		[theme.breakpoints.down("xs")]: {
+			height: "5.5em",
+		},
 	},
 	tabContainer: {
 		marginLeft: "auto",
@@ -68,6 +82,8 @@ const useStyles = makeStyles((theme) => ({
 
 const Header = (props) => {
 	const classes = useStyles();
+	const theme = useTheme();
+	const matches = useMediaQuery(theme.breakpoints.down("md"));
 	const [index, setIndex] = useState(0);
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [open, setOpen] = useState(false);
@@ -171,6 +187,82 @@ const Header = (props) => {
 		}
 	}, [index]);
 
+	const tabs = (
+		<React.Fragment>
+			<Tabs
+				value={index}
+				onChange={indexHandler}
+				className={classes.tabContainer}
+				indicatorColor="primary"
+			>
+				<Tab className={classes.tab} component={Link} to="/" label="Home"></Tab>
+				<Tab
+					aria-owns={anchorEl ? "simple-menu" : undefined}
+					aria-haspopup={anchorEl ? true : undefined}
+					className={classes.tab}
+					component={Link}
+					onMouseOver={(e) => handleHover(e)}
+					to="/services"
+					label="Services"
+				></Tab>
+				<Tab
+					className={classes.tab}
+					component={Link}
+					to="revolution"
+					label="The Revolution"
+				></Tab>
+				<Tab
+					className={classes.tab}
+					component={Link}
+					to="about"
+					label="About Us"
+				></Tab>
+				<Tab
+					className={classes.tab}
+					component={Link}
+					to="contact"
+					label="Contact Us"
+				></Tab>
+			</Tabs>
+			<Button
+				onClick={() => setIndex(5)}
+				variant="contained"
+				color="secondary"
+				className={classes.button}
+				component={Link}
+				to="/estimate"
+			>
+				{" "}
+				Free Estimate{" "}
+			</Button>
+			<Menu
+				id="simple-menu"
+				anchorEl={anchorEl}
+				open={open}
+				onClose={handleClose}
+				MenuListProps={{ onMouseLeave: handleClose }}
+				classes={{ paper: classes.menu }}
+				elevation={0}
+			>
+				{menuOptions.map((option, _index) => (
+					<MenuItem
+						key={option}
+						component={Link}
+						to={option.link}
+						classes={{ root: classes.menuItem }}
+						onClick={(event) => {
+							handleMenuItemClick(event, _index);
+							setIndex(1);
+							handleClose();
+						}}
+						selected={_index === selectedIndex && index === 1}
+					>
+						{option.name}
+					</MenuItem>
+				))}
+			</Menu>
+		</React.Fragment>
+	);
 	return (
 		<React.Fragment>
 			<ElevationScroll>
@@ -186,83 +278,7 @@ const Header = (props) => {
 						>
 							<img className={classes.logo} alt="Company Logo" src={logo} />
 						</Button>
-						<Tabs
-							value={index}
-							onChange={indexHandler}
-							className={classes.tabContainer}
-							indicatorColor="primary"
-						>
-							<Tab
-								className={classes.tab}
-								component={Link}
-								to="/"
-								label="Home"
-							></Tab>
-							<Tab
-								aria-owns={anchorEl ? "simple-menu" : undefined}
-								aria-haspopup={anchorEl ? true : undefined}
-								className={classes.tab}
-								component={Link}
-								onMouseOver={(e) => handleHover(e)}
-								to="/services"
-								label="Services"
-							></Tab>
-							<Tab
-								className={classes.tab}
-								component={Link}
-								to="revolution"
-								label="The Revolution"
-							></Tab>
-							<Tab
-								className={classes.tab}
-								component={Link}
-								to="about"
-								label="About Us"
-							></Tab>
-							<Tab
-								className={classes.tab}
-								component={Link}
-								to="contact"
-								label="Contact Us"
-							></Tab>
-						</Tabs>
-						<Button
-							onClick={() => setIndex(5)}
-							variant="contained"
-							color="secondary"
-							className={classes.button}
-							component={Link}
-							to="/estimate"
-						>
-							{" "}
-							Free Estimate{" "}
-						</Button>
-						<Menu
-							id="simple-menu"
-							anchorEl={anchorEl}
-							open={open}
-							onClose={handleClose}
-							MenuListProps={{ onMouseLeave: handleClose }}
-							classes={{ paper: classes.menu }}
-							elevation={0}
-						>
-							{menuOptions.map((option, _index) => (
-								<MenuItem
-									key={option}
-									component={Link}
-									to={option.link}
-									classes={{ root: classes.menuItem }}
-									onClick={(event) => {
-										handleMenuItemClick(event, _index);
-										setIndex(1);
-										handleClose();
-									}}
-									selected={_index === selectedIndex && index === 1}
-								>
-									{option.name}
-								</MenuItem>
-							))}
-						</Menu>
+						{matches ? null : tabs}
 					</Toolbar>
 				</AppBar>
 			</ElevationScroll>
